@@ -1,7 +1,7 @@
 ---
 transition: fade-out
 layout: image-right
-image: https://images.unsplash.com/photo-1527482797697-8795b05a13fe?w=800
+image: https://plus.unsplash.com/premium_photo-1669048778061-ecd451ecbbed?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
 ---
 
 # Why Weather Prediction Matters
@@ -13,46 +13,28 @@ image: https://images.unsplash.com/photo-1527482797697-8795b05a13fe?w=800
 - Early warning systems — time to evacuate and prepare
 
 ---
-layout: default
-transition: slide-left
----
-
-# The Gold Standard: Numerical Weather Prediction
-
-The **European Centre for Medium-Range Weather Forecasts (ECMWF)** operates the Integrated Forecasting System (IFS), whose deterministic model **HRES** is the most accurate in the world.
-
-- Solves governing equations of atmospheric dynamics on supercomputers
-- Global 10-day forecasts at **0.1° resolution**
-- Runs on a cluster of **11,664+ cores**, takes ~1 hour per forecast
-- Decades of rigorous research and continuous improvement
-
-> *"The accuracy of weather forecasts have increased year after year, to the point where the surface temperature, or the path of a hurricane, can be predicted many days ahead — a possibility that was unthinkable even a few decades ago."*
-
----
 layout: two-cols
 transition: slide-left
 ---
 
-# NWP's Limitations
+# NWP: Gold Standard & Its Limits
 
-- **Computationally expensive** — requires supercomputers, ~1 hour per 10-day forecast
-- **Cannot learn from historical data** — vast archives like ECMWF's MARS exist but NWP can't use them directly
-- **Improvements are slow** — relies on experts hand-crafting better equations and approximations
-- **Weak in certain regimes** — sub-seasonal heat waves, precipitation nowcasting
+The **ECMWF**'s Integrated Forecasting System and its model **HRES** is the gold standard in weather prediction.
+
+- Solves governing equations of atmospheric dynamics on supercomputers
+- Global 10-day forecasts at **0.1° resolution**
+- Runs on **11,664+ cores**, ~1 hour per forecast
 
 ::right::
 
-<div class="ml-4 mt-12">
+<div class="ml-4 mt-16">
 
-```
-NWP Scaling:
+### But it has limits:
 
-  More compute → better accuracy
-  More data → no direct improvement
-  Speed → limited by physics solvers
-```
-
-This is where **machine learning** enters the picture.
+- **Computationally expensive** — requires supercomputers
+- **Cannot learn from historical data** — vast archives exist but NWP can't use them
+- **Improvements are slow** — experts hand-craft better equations
+- **Weak in certain regimes** — heat waves, precipitation nowcasting
 
 </div>
 
@@ -89,12 +71,22 @@ Several deep learning architectures have been applied to medium-range forecastin
 These methods have been steadily closing the gap with HRES at **0.25°** resolution and lead times up to **7 days**.
 
 ---
-layout: center
-class: text-center
-background: https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=1920
+layout: default
+transition: slide-left
 ---
 
-# And then came GraphCast.
+# How Do Graph Neural Networks Work?
+
+GNNs operate on **graph structures** — nodes connected by edges — and learn through **message-passing**.
+
+1. Each node holds features (e.g. temperature, pressure at a location)
+2. In each round, nodes **collect messages** from their neighbors
+3. Messages are **aggregated** and used to **update** the node's state
+4. After multiple rounds, each node has information from many hops away
+
+This is powerful for weather because conditions at one location depend on distant conditions — a pressure system over the Atlantic affects weather in Europe. Message-passing propagates this influence naturally.
+
+> **Why not a regular grid?** Lat-lon grids bunch up at the poles. GNNs can operate on irregular meshes that distribute points evenly across the globe.
 
 ---
 layout: default
