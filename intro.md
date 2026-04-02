@@ -71,7 +71,8 @@ Several deep learning architectures have been applied to medium-range forecastin
 These methods have been steadily closing the gap with HRES at **0.25°** resolution and lead times up to **7 days**.
 
 ---
-layout: default
+layout: image-right
+image: https://images.unsplash.com/photo-1545987796-200677ee1011?q=80&w=1470
 transition: slide-left
 ---
 
@@ -84,7 +85,6 @@ GNNs operate on **graph structures** — nodes connected by edges — and learn 
 3. Messages are **aggregated** and used to **update** the node's state
 4. After multiple rounds, each node has information from many hops away
 
-This is powerful for weather because conditions at one location depend on distant conditions — a pressure system over the Atlantic affects weather in Europe. Message-passing propagates this influence naturally.
 
 > **Why not a regular grid?** Lat-lon grids bunch up at the poles. GNNs can operate on irregular meshes that distribute points evenly across the globe.
 
@@ -93,31 +93,15 @@ layout: default
 transition: slide-left
 ---
 
-# GraphCast: Key Claims
+# GraphCast & What This Paper Represents
 
 - **Outperforms HRES on 90.3%** of 1,380 verification targets (variables × pressure levels × lead times)
-- Produces a full **10-day global forecast in under 1 minute** on a single Cloud TPU v4
-- Operates at **0.25° resolution** (~28km at the equator) with **227 predicted variables**
-- Only **36.7 million parameters** — small by modern ML standards
-- Strong on **severe events** — tropical cyclone tracking, atmospheric rivers, extreme temperatures — without being specifically trained for them
+- Full **10-day global forecast in under 1 minute** on a single Cloud TPU v4
+- **0.25° resolution** (~28km) with **227 predicted variables**, only **36.7M parameters**
+- Strong on **severe events** — tropical cyclone tracking, atmospheric rivers, extreme temperatures — without specific training
 
-<br>
-
-> HRES: 11,664-core supercomputer cluster, ~1 hour
->
-> GraphCast: 1 TPU, < 1 minute
-
----
-layout: image-right
-image: https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800
-transition: slide-left
----
-
-# What This Paper Represents
+> HRES: 11,664-core supercomputer cluster, ~1 hour → GraphCast: 1 TPU, < 1 minute
 
 - First ML model to **decisively surpass** the best operational NWP system across a broad evaluation
 - Not a replacement — MLWP depends critically on NWP-generated reanalysis data like ERA5
-- A complement that can **improve and extend** current best methods
-- Opens doors beyond weather: climate, ecology, energy, agriculture
-
-**Next: How does GraphCast actually work?** →
+- A complement that can **improve and extend** current methods, opening doors to climate, ecology, energy, and agriculture
