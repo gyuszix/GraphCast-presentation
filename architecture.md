@@ -128,22 +128,23 @@ backgroundSize: 80%
 - **Grid2Mesh GNN:** Transfers atmospheric state information from grid nodes to mesh nodes via a single message-passing step
 
 ---
-layout: default
+layout: image-right
+image: images/processor.png
+backgroundSize: 80%
 ---
 
 # Phase 2: The Processor
 
 **Deep GNN operating on the Mesh subgraph $G_M(V_M, E_M)$**
 
-The mesh edges contain the full multi-mesh ($M_0$ through $M_6$) to enable long-distance communication.
-
-### Multi-Mesh GNN Architecture
-
 Iteratively applied **16 times** using unshared MLP weights:
 
 1. **Update mesh edges** using information of adjacent nodes
+    -  $e' = \text{MLP}(e, v_s, v_r)$
 2. **Update mesh nodes**, aggregating information from all edges
+    - $v' = \text{MLP}(v, \text{AGGREGATE}(e'))$
 3. **Residual connection** applied to updated representations
+    -  $v'' = v + v'$
 
 ---
 layout: image-right
@@ -162,4 +163,4 @@ Performs a single message-passing step over the Mesh2Grid bipartite subgraph:
 
 ### Output Function
 - Produces per-node predictions $\hat{y}_i$ using an MLP (227 variables)
-$$hat{X}_{t+1} = X_t + hat{Y}_t$$
+$$\hat{X}_{t+1} = X_t + \hat{Y}_t$$
