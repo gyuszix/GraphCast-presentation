@@ -20,7 +20,7 @@ src: ./intro.md
 ---
 
 ---
-src: ./mid.md
+src: ./architecture.md
 ---
 
 ---
