@@ -1,12 +1,17 @@
 ---
 layout: default
+class: flex flex-col justify-center items-center
 ---
 
 # GraphCast
 
-$$X_{t+1} = \\text{GraphCast}(X_t, X_{t-1})$$
+GraphCast is a one-step learned simulator that takes the role of $\phi$ and predicts the next step based on two consecutive input states.
 
-$$X_{t+1:t+T} = (\\text{GraphCast}(X_t, X_{t-1}), \\text{GraphCast}(\\hat{X}_{t+1}, X_t), \\dots, \\text{GraphCast}(\\hat{X}_{t+T-1}, \\hat{X}_{t+T-2}))$$
+$$X_{t+1} = \text{GraphCast}(X_t, X_{t-1})$$
+
+$$X_{t+1:t+T} = (\text{GraphCast}(X_t, X_{t-1}), \text{GraphCast}(\hat{X}_{t+1}, X_t), \dots, \text{GraphCast}(\hat{X}_{t+T-1}, \hat{X}_{t+T-2}))$$
+
+**Design rationale:** Two input states were found to yield better performance than one, while three consecutive states did not provide sufficient improvement to justify the increased memory footprint.
 
 ---
 layout: default
@@ -20,7 +25,7 @@ layout: default
 - **37 pressure levels** for vertical atmospheric coverage
 - These variables are fundamental to representing the atmospheric state accurately for medium-range forecasting
 
-![](./images/phy-var-table.png) {class="w-full"}
+![](./images/phy-var-table.png)
 
 ---
 layout: default
@@ -35,22 +40,23 @@ Each grid node represents a vertical slice of the atmosphere at a given latitude
 At **0.25° resolution**, there is a total of **721 × 1440 = 1,038,240 grid nodes**.
 
 Each grid node has **474 input features**, computed as follows:
-- ($5$ surface variables + $6$ atmospheric variables $\\times 37$ levels) $\\times 2$ steps
-- + $5$ forcings $\\times 3$ steps
+- ($5$ surface variables + $6$ atmospheric variables $\times 37$ levels) $\times 2$ steps
+- + $5$ forcings $\times 3$ steps
 - + $5$ constants
 
 ---
-layout: image-right
-image: images/mesh-refinement.png
+layout: default
 ---
 
-# Mesh Refinement Levels
+# Mesh Nodes (Refinement Levels)
 
 - Placed uniformly around the globe in an R-refined icosahedral mesh $M_R$
-- Iteratively refined $M_r \\rightarrow M_{r+1}$ by splitting each triangular face into 4 smaller faces
+- Iteratively refined $M_r \rightarrow M_{r+1}$ by splitting each triangular face into 4 smaller faces
 - GraphCast refines the mesh $R=6$ times to obtain $M_6$
 - **40,962 mesh nodes** at full refinement level
 - Each mesh node contains **3 input features**
+
+![](./images/mesh-refinement.png)
 
 ---
 layout: default
@@ -65,6 +71,7 @@ transition: fade-out
 - Each edge has **4 input features**
 - Forms the core of the mesh graph structure
 
+![](./images/grid-node-edge-nums.png)
 ---
 layout: default
 transition: fade-out
@@ -73,7 +80,7 @@ transition: fade-out
 # Grid2Mesh Edges (Grid → Mesh)
 
 - **Unidirectional edges** connecting grid nodes to mesh nodes
-- An edge is added if the distance $\\le 0.6 \\times$ the length of edges in $M_6$
+- An edge is added if the distance $\le 0.6 \times$ the length of edges in $M_6$
 - Ensures every grid node is connected to at least one mesh node
 - Enables transfer of atmospheric state information from grid to mesh
 - Total of **1,618,746 Grid2Mesh edges**
@@ -110,6 +117,7 @@ Standard Encode-Process-Decode architecture:
 ---
 layout: image-right
 image: images/encoder.png
+backgroundSize: 80%
 ---
 
 # Phase 1: The Encoder
@@ -138,7 +146,9 @@ Iteratively applied **16 times** using unshared MLP weights:
 3. **Residual connection** applied to updated representations
 
 ---
-layout: default
+layout: image-right
+image: images/decoder.png
+backgroundSize: 80%
 ---
 
 # Phase 3: The Decoder
@@ -151,5 +161,5 @@ Performs a single message-passing step over the Mesh2Grid bipartite subgraph:
 2. Updates each grid node, aggregating incoming edge information
 
 ### Output Function
-- Produces per-node predictions $\\hat{y}_i$ using an MLP (227 variables)
-$$\hat{X}_{t+1} = X_t + \hat{Y}_t$$
+- Produces per-node predictions $\hat{y}_i$ using an MLP (227 variables)
+$$hat{X}_{t+1} = X_t + hat{Y}_t$$
