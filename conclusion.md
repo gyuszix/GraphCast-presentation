@@ -125,22 +125,22 @@ layout: default
 transition: slide-left
 ---
 
-# Headline Result: GraphCast vs. HRES Scorecard
+# Headline Result: GraphCast Beats HRES on 90.3% of Targets
 
-GraphCast outperforms HRES on **90.3% of 1,380 verification targets** (RMSE).
-
-<div class="flex gap-4 mt-4">
-  <div class="flex-1">
-    <img src="./images/figure 2b.png" class="h-60 mx-auto" />
-    <p class="text-center text-sm mt-1">RMSE skill score on z500 — 7%–14% improvement across all lead times</p>
-  </div>
-  <div class="flex-1">
-    <img src="./images/figure 2d.png" class="h-60 mx-auto" />
-    <p class="text-center text-sm mt-1">Full scorecard — blue = GraphCast wins, red = HRES wins</p>
-  </div>
+<div class="flex justify-center">
+  <img src="./images/figure 2d.png" class="w-full max-h-56" />
 </div>
 
-$$\text{Skill Score} = \frac{\text{RMSE}_A - \text{RMSE}_B}{\text{RMSE}_B}$$
+<p class="text-center text-sm -mt-1 mb-1">RMSE skill scorecard — each cell is one variable × level × lead time. <strong>Blue = GraphCast wins</strong>, red = HRES wins.</p>
+
+<div class="flex items-center gap-6 mt-1">
+  <img src="./images/figure 2b.png" class="h-44 shrink-0" />
+  <div class="text-sm">
+
+  **z500** (geopotential at 500 hPa) — the headline variable for medium-range forecasting. GraphCast shows **7%–14% improvement** across all lead times. The **dashed vertical line** at 3.5 days marks where the HRES baseline switches from its short-range runs (06z/18z) to its full 10-day runs (00z/12z) — GraphCast wins on both sides.
+
+  </div>
+</div>
 
 ---
 layout: default
@@ -168,50 +168,48 @@ layout: default
 transition: slide-left
 ---
 
-# Severe Event Forecasting: Tropical Cyclones
+# Severe Weather Events: Cyclones
 
-GraphCast was **not specifically trained** to predict severe events — but its forecasts support downstream severe event prediction.
+GraphCast was **never trained to track cyclones** — it only learned to predict raw atmospheric variables one step ahead. But a separate tracking algorithm applied to its outputs produces cyclone paths that are more accurate than HRES.
 
-<div class="flex gap-4 mt-4">
+<div class="flex gap-4 mt-2">
   <div class="flex-1">
-    <img src="./images/figure 3a.png" class="h-55 mx-auto" />
-    <p class="text-center text-sm mt-1">Median track error — GraphCast vs. HRES (2018–2021)</p>
+    <img src="./images/figure 3a.png" class="h-48 mx-auto" />
+    <p class="text-center text-xs mt-1">Median track error (km) — lower is better</p>
   </div>
   <div class="flex-1">
-    <img src="./images/figure 3b.png" class="h-55 mx-auto" />
-    <p class="text-center text-sm mt-1">Paired error difference — significantly better from 18h to 4.75 days</p>
+    <img src="./images/figure 3b.png" class="h-48 mx-auto" />
+    <p class="text-center text-xs mt-1">Paired difference — negative means GraphCast is closer</p>
   </div>
 </div>
 
-- Tracking algorithm based on **ECMWF's published protocols**, applied to GraphCast's predicted fields
-- Ground truth: **IBTrACS** — independent reanalysis dataset of cyclone tracks
-- Bootstrapped **95% confidence intervals** confirm significance
+This is emergent behavior — the model learns enough about atmospheric dynamics from MSE on basic variables that complex downstream tasks just work. No task-specific fine-tuning, no cyclone labels in the training data.
 
 ---
 layout: default
 transition: fade-out
 ---
 
-# Severe Events: Atmospheric Rivers & Extreme Temperatures
+# Severe Weather Events: Rare Events
 
-<div class="flex gap-4 mt-2">
+The same pattern holds for two more downstream tasks the model was never trained on:
+
+<div class="flex gap-4 mt-1">
   <div class="flex-1">
-    <img src="./images/figure 3c.png" class="h-50 mx-auto" />
-    <p class="text-center text-sm mt-1">Atmospheric river (ivt) RMSE — 25% better at short range, 10% at long range</p>
+    <img src="./images/figure 3c.png" class="h-40 mx-auto" />
+    <p class="text-center text-xs mt-1">Predicting moisture transport (a derived quantity)</p>
   </div>
   <div class="flex-1">
-    <img src="./images/figure 3d.png" class="h-50 mx-auto" />
-    <p class="text-center text-sm mt-1">Extreme heat precision-recall — GraphCast superior at 5- and 10-day lead times</p>
+    <img src="./images/figure 3d.png" class="h-40 mx-auto" />
+    <p class="text-center text-xs mt-1">Detecting extreme heat (a rare-event classification task)</p>
   </div>
 </div>
 
-### Atmospheric Rivers
-- Responsible for **30%–65% of annual precipitation** on the U.S. West Coast
-- Evaluated via **vertically integrated water vapor transport (ivt)** — derived from wind + humidity predictions
+**Derived quantities** — moisture transport is computed from wind × humidity. GraphCast only predicts wind and humidity separately, yet the nonlinear combination is **25% more accurate** than HRES at short lead times.
 
-### Extreme Heat & Cold
-- Binary classification: will temperature exceed the **98th percentile** of historical climatology?
-- Assessed using **precision-recall curves** — appropriate for rare, imbalanced events
+**Rare event detection** — "will temperature exceed the 98th percentile?" is a heavily imbalanced binary classification problem. Evaluated with **precision-recall curves** (not accuracy — class imbalance makes accuracy meaningless). GraphCast is better at 5- and 10-day horizons.
+
+> The takeaway: a model trained on simple per-variable MSE learns representations rich enough to generalize to complex, unseen tasks.
 
 ---
 layout: default
@@ -228,6 +226,28 @@ Can GraphCast improve by training on more recent data?
 
 - Four variants trained 1979→2017, 2018, 2019, 2020 — all tested on **2021 data**
 - More recent training data **consistently improves skill scores**
-- Suggests the model captures **evolving weather patterns** — ENSO cycles, climate change effects
+- Suggests the model captures **evolving weather patterns** — ocean-atmosphere cycles, shifting climate trends
 
 > Key advantage over static NWP: GraphCast can adapt to a changing climate through periodic re-training.
+
+---
+layout: default
+class: flex flex-col justify-center items-center
+transition: fade-out
+---
+
+# Key Takeaways
+
+**Training** — curriculum learning enables stable 3-day rollouts; careful loss weighting matters more than model size
+
+**Verification** — rigorous fair comparison protocol; wins on 90.3% of 1,380 targets even after controlling for blurring
+
+**Generalization** — emergent performance on cyclone tracking, moisture transport, and extreme heat detection without task-specific training
+
+**What came next** — GenCast (2024) added probabilistic ensembles via diffusion; WeatherNext 2 (2025) scaled to 180M params with 8× faster inference
+
+<div class="mt-8 text-2xl">
+
+**Questions?**
+
+</div>
