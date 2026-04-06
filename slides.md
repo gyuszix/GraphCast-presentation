@@ -7,6 +7,8 @@ drawings:
   persist: false
 transition: slide-left
 title: "GraphCast: Learning Skillful Medium-Range Global Weather Forecasting"
+toc: false
+controls: false
 ---
 
 # GraphCast
