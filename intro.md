@@ -57,11 +57,14 @@ An alternative approach: **train forecast models directly on historical data**.
 These methods have been steadily closing the gap with HRES at **0.25°** resolution and lead times up to **7 days**.
 
 ---
-layout: two-cols
+layout: default
 transition: slide-left
 ---
 
 # GNN Key Terminology
+
+<div class="flex gap-8">
+<div>
 
 - **Nodes** — entities with feature vectors
 - **Edges** — connections, can carry features too
@@ -69,9 +72,10 @@ transition: slide-left
 - **Pooling** — routing info between graph attributes
 - **Permutation invariance** — node order doesn't matter
 
-::right::
+<img src="/images/GNN image.png" class="mt-4 max-h-56 object-contain" />
 
-<div class="ml-4 mt-16">
+</div>
+<div>
 
 ### Encoder–Processor–Decoder
 
@@ -83,6 +87,7 @@ A common GNN pipeline:
 
 > This is exactly how GraphCast is structured.
 
+</div>
 </div>
 
 ---
