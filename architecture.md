@@ -3,7 +3,7 @@ layout: default
 class: flex flex-col justify-center items-center
 ---
 
-# GraphCast
+# GraphCast Architecture
 
 GraphCast is a one-step learned simulator that takes the role of $\phi$ and predicts the next step based on two consecutive input states.
 
@@ -20,29 +20,29 @@ layout: default
 # Physical Variables
 
 - GraphCast models weather variables over multiple vertical levels
-- **Surface variables (5):** Temperature, wind components, sea-level pressure, precipitation
-- **Atmospheric variables (6):** Temperature, wind, geopotential, humidity, vertical wind
-- **37 pressure levels** for vertical atmospheric coverage
 - These variables are fundamental to representing the atmospheric state accurately for medium-range forecasting
 
 ![](./images/phy-var-table.png)
 
 ---
-layout: default
+layout: image-right
+image: images/phy-var-viz.png
+backgroundSize: 80%
+
 ---
 
-# GraphCast Components: Grid Nodes
-
-### Grid node representation
+# Grid Nodes
 
 Each grid node represents a vertical slice of the atmosphere at a given latitude-longitude point.
 
 At **0.25° resolution**, there is a total of **721 × 1440 = 1,038,240 grid nodes**.
+- 0.25° resolution = ~28 km at the equator
 
-Each grid node has **474 input features**, computed as follows:
-- ($5$ surface variables + $6$ atmospheric variables $\times 37$ levels) $\times 2$ steps
-- + $5$ forcings $\times 3$ steps
-- + $5$ constants
+$$(5 + 6 \times 37) \times 2 + 5 \times 3 + 5 = 474 \space features$$
+
+Where:
+- $5 \times 3$: forcing variables (e.g., solar radiation, tidal effects) at 3 timesteps
+- $+5$: constants (e.g., latitude, longitude, land-sea mask)
 
 ---
 layout: default
@@ -77,7 +77,7 @@ layout: default
 transition: fade-out
 ---
 
-# Grid2Mesh Edges (Grid → Mesh)
+# Grid2Mesh Edges
 
 - **Unidirectional edges** connecting grid nodes to mesh nodes
 - An edge is added if the distance $\le 0.6 \times$ the length of edges in $M_6$
@@ -91,7 +91,7 @@ layout: default
 transition: fade-out
 ---
 
-# Mesh2Grid Edges (Mesh → Grid)
+# Mesh2Grid Edges
 
 - **Unidirectional edges** connecting mesh nodes back to grid nodes
 - For each grid point, find the triangular face in $M_6$ that contains it
