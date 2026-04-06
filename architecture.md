@@ -21,6 +21,7 @@ layout: default
 
 - GraphCast models weather variables over multiple vertical levels
 - These variables are fundamental to representing the atmospheric state accurately for medium-range forecasting
+- All inputs are normalized to zero mean and unit variance.
 
 ![](./images/phy-var-table.png)
 
@@ -73,11 +74,14 @@ transition: fade-out
 
 ![](./images/grid-node-edge-nums.png)
 ---
-layout: default
+layout: two-cols-header
 transition: fade-out
 ---
 
-# Grid2Mesh Edges
+# More Edges !!
+
+::left::
+## Grid2Mesh Edges
 
 - **Unidirectional edges** connecting grid nodes to mesh nodes
 - An edge is added if the distance $\le 0.6 \times$ the length of edges in $M_6$
@@ -86,12 +90,9 @@ transition: fade-out
 - Total of **1,618,746 Grid2Mesh edges**
 - Each edge has **4 input features**
 
----
-layout: default
-transition: fade-out
----
+::right::
 
-# Mesh2Grid Edges
+## Mesh2Grid Edges
 
 - **Unidirectional edges** connecting mesh nodes back to grid nodes
 - For each grid point, find the triangular face in $M_6$ that contains it
@@ -99,6 +100,11 @@ transition: fade-out
 - Enables transfer of processed information from mesh back to grid
 - Total of **3,114,720 Mesh2Grid edges**
 - Each edge has **4 input features**
+<style>
+.two-cols-header {
+  column-gap: 30px; /* Adjust the gap size as needed */
+}
+</style>
 
 ---
 layout: image-right
