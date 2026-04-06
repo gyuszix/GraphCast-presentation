@@ -57,18 +57,18 @@ transition: fade-out
 
 GraphCast outperforms HRES on **90.3% of 1,380 verification targets** (RMSE).
 
-### Key findings on z500 (geopotential at 500 hPa):
-- **7%–14% RMSE skill score improvement** across all lead times
-- Consistent advantage on ACC as well
-- Results hold across the full scorecard of variables and pressure levels
-
-### Skill Score Definition
+<div class="flex gap-4 mt-4">
+  <div class="flex-1">
+    <img src="./images/figure 2b.png" class="h-60 mx-auto" />
+    <p class="text-center text-sm mt-1">RMSE skill score on z500 — 7%–14% improvement across all lead times</p>
+  </div>
+  <div class="flex-1">
+    <img src="./images/figure 2d.png" class="h-60 mx-auto" />
+    <p class="text-center text-sm mt-1">Full scorecard — blue = GraphCast wins, red = HRES wins</p>
+  </div>
+</div>
 
 $$\text{Skill Score} = \frac{\text{RMSE}_A - \text{RMSE}_B}{\text{RMSE}_B}$$
-
-Negative = Model A is better. The scorecard visualizes this across all 1,380 targets — blue cells where GraphCast wins, red where HRES wins.
-
-> The scorecard is overwhelmingly blue.
 
 ---
 layout: default
@@ -122,16 +122,20 @@ transition: slide-left
 
 GraphCast was **not specifically trained** to predict severe events — but its forecasts support downstream severe event prediction.
 
-### Methodology
-- Cyclone tracking algorithm applied to GraphCast's predicted fields (z, 10u/10v, u/v, msl)
-- Based on **ECMWF's published tracking protocols**
-- Compared against HRES operational tracks from **TIGGE archive**
-- Ground truth: **IBTrACS** — independent reanalysis dataset of cyclone tracks
+<div class="flex gap-4 mt-4">
+  <div class="flex-1">
+    <img src="./images/figure 3a.png" class="h-55 mx-auto" />
+    <p class="text-center text-sm mt-1">Median track error — GraphCast vs. HRES (2018–2021)</p>
+  </div>
+  <div class="flex-1">
+    <img src="./images/figure 3b.png" class="h-55 mx-auto" />
+    <p class="text-center text-sm mt-1">Paired error difference — significantly better from 18h to 4.75 days</p>
+  </div>
+</div>
 
-### Results (2018–2021)
-- GraphCast has **lower median track error** than HRES
-- **Significantly better** from 18 hours to 4.75 days lead time (paired analysis)
-- Bootstrapped 95% confidence intervals confirm significance
+- Tracking algorithm based on **ECMWF's published protocols**, applied to GraphCast's predicted fields
+- Ground truth: **IBTrACS** — independent reanalysis dataset of cyclone tracks
+- Bootstrapped **95% confidence intervals** confirm significance
 
 ---
 layout: default
@@ -140,17 +144,24 @@ transition: fade-out
 
 # Severe Events: Atmospheric Rivers & Extreme Temperatures
 
+<div class="flex gap-4 mt-2">
+  <div class="flex-1">
+    <img src="./images/figure 3c.png" class="h-50 mx-auto" />
+    <p class="text-center text-sm mt-1">Atmospheric river (ivt) RMSE — 25% better at short range, 10% at long range</p>
+  </div>
+  <div class="flex-1">
+    <img src="./images/figure 3d.png" class="h-50 mx-auto" />
+    <p class="text-center text-sm mt-1">Extreme heat precision-recall — GraphCast superior at 5- and 10-day lead times</p>
+  </div>
+</div>
+
 ### Atmospheric Rivers
-- Narrow atmospheric regions responsible for **30%–65% of annual precipitation** on the U.S. West Coast
-- Characterized by **vertically integrated water vapor transport (ivt)** — derived from wind and humidity predictions
-- GraphCast improves ivt prediction over HRES: **~25% at short lead times**, **~10% at longer horizons**
-- Evaluated over coastal North America during cold months (Oct–Apr)
+- Responsible for **30%–65% of annual precipitation** on the U.S. West Coast
+- Evaluated via **vertically integrated water vapor transport (ivt)** — derived from wind + humidity predictions
 
 ### Extreme Heat & Cold
-- Evaluated as a **binary classification** problem: will temperature exceed the 98th percentile of historical climatology?
-- Assessed using **precision-recall curves** and **SEDI scores** — appropriate for rare, imbalanced events
-- GraphCast's precision-recall curves are **above HRES at 5- and 10-day lead times**
-- HRES slightly better at 12-hour lead time (consistent with near-zero 2t skill score at short horizons)
+- Binary classification: will temperature exceed the **98th percentile** of historical climatology?
+- Assessed using **precision-recall curves** — appropriate for rare, imbalanced events
 
 ---
 layout: default
@@ -161,17 +172,15 @@ transition: slide-left
 
 Can GraphCast improve by training on more recent data?
 
-### Experiment
-- Four model variants trained on data starting from 1979 but ending in **2017, 2018, 2019, and 2020**
-- All evaluated on **2021 test data**
+<div class="flex justify-center mt-4">
+  <img src="./images/figure 4.png" class="h-55" />
+</div>
 
-### Finding
-- GraphCast:<2018 is already competitive with HRES
-- Training up to 2020 (GraphCast:<2021) **further improves skill scores**
+- Four variants trained 1979→2017, 2018, 2019, 2020 — all tested on **2021 data**
+- More recent training data **consistently improves skill scores**
 - Suggests the model captures **evolving weather patterns** — ENSO cycles, climate change effects
-- Practical implication: periodic re-training with recent data is beneficial
 
-> This is a key advantage over static NWP formulations — GraphCast can adapt to a changing climate through re-training.
+> Key advantage over static NWP: GraphCast can adapt to a changing climate through periodic re-training.
 
 ---
 layout: default
