@@ -3,6 +3,108 @@ layout: default
 transition: fade-out
 ---
 
+# Training Data: ERA5 Reanalysis
+
+GraphCast learns entirely from **ECMWF's ERA5 reanalysis archive** — a dense, global weather dataset.
+
+- **0.25° resolution**, **6-hour intervals**, hundreds of variables from **1979 onward**
+- Strict **temporal (causal) split** to prevent any future information leakage:
+
+| Split | Years | Purpose |
+|---|---|---|
+| **Training** | 1979–2015 | Learn model weights |
+| **Validation** | 2016–2017 | Hyperparameter tuning & model selection |
+| **Test** | 2018–2021 | Final evaluation (never touched during development) |
+
+- Architecture and training protocol were **fully frozen** before touching test data
+- They also tried data back to 1959 but found **no benefit** — pre-satellite-era data may be too noisy
+
+---
+layout: default
+transition: slide-left
+---
+
+# Loss Function: Weighted MSE
+
+The training objective is **mean squared error** between GraphCast's predictions and ERA5 ground truth, but with careful weighting:
+
+$$\mathcal{L} = \frac{1}{|\text{batch}|} \sum \text{area}(i) \cdot \sigma_j^{-1} \cdot w_j \cdot \left\| \hat{X}_{i,j} - X_{i,j} \right\|^2$$
+
+### Three layers of weighting:
+
+- **Area weighting** — grid cells near poles are smaller; weight by cell area to avoid polar bias
+- **Inverse variance scaling** ($\sigma_j^{-1}$) — normalize each variable-level pair by the variance of its time differences, so all targets have roughly unit variance
+- **Per-variable weights** ($w_j$):
+  - Atmospheric variables weighted **proportional to pressure level** (proxy for air density — lower levels matter more)
+  - Surface variable weights **hand-tuned** on validation: 2t gets weight **1.0**, while 10u, 10v, msl, and tp each get **0.1**
+
+> This means the model prioritizes getting surface temperature right, while wind/pressure/precip contribute less to the gradient signal.
+
+---
+layout: default
+transition: fade-out
+---
+
+# Autoregressive Curriculum Training
+
+Training happens in **three phases**, progressively teaching the model to handle longer rollouts:
+
+### Phase 1: Warmup (1,000 steps)
+- **Single autoregressive step** — predict just one 6h step ahead
+- Learning rate linearly ramps up to **1e-3**
+
+### Phase 2: Single-Step Training (299,000 steps)
+- Still **single-step** predictions
+- Learning rate decays via **half-cosine schedule** back to zero
+- This is where the model learns the bulk of its forecasting skill
+
+### Phase 3: Rollout Fine-Tuning (11,000 steps)
+- Autoregressive steps **ramp from 2 → 12** (increasing by 1 every 1,000 updates)
+- Fixed learning rate of **3e-7** (very small — fine-tuning, not relearning)
+- At 12 steps × 6h = the model learns to minimize error over **3-day trajectories**
+- Backpropagation through time across all rollout steps
+
+> This curriculum prevents the instability that would come from training on long rollouts from scratch.
+
+---
+layout: two-cols
+transition: slide-left
+---
+
+# Optimization & Compute
+
+### Optimizer: AdamW
+- $\beta_1 = 0.9$, $\beta_2 = 0.95$
+- Weight decay: **0.1**
+- Gradient norm clipping at **32**
+
+### Hardware
+- **32 Cloud TPU v4** devices
+- Batch size **32** (one sample per device)
+- **bfloat16** mixed precision
+- **Gradient checkpointing** to fit the 12-step unrolled model into 32 GB per device
+
+::right::
+
+<div class="ml-4 mt-16">
+
+### Training Time
+- **~4 weeks** total
+- Phases 1+2: ~300K steps of single-step training
+- Phase 3: 11K steps of increasingly long rollouts
+
+### Model Size
+- Only **36.7M parameters**
+- Small by modern standards — constrained by memory needed for multi-step unrolling
+- A family of models; this is the largest that fits current hardware
+
+</div>
+
+---
+layout: default
+transition: fade-out
+---
+
 # Verification Methods: How Do We Know It's Good?
 
 GraphCast is evaluated against **HRES** across a massive verification space:
