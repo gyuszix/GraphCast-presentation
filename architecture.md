@@ -150,7 +150,7 @@ Iteratively applied **16 times** using unshared MLP weights:
     -  $e' = \text{MLP}(e, v_s, v_r)$
 2. **Update mesh nodes**, aggregating information from all edges
     - $v' = \text{MLP}(v, \text{AGGREGATE}(e'))$
-3. **Residual connection** applied to updated representations
+3. **Skip connection** preserves original node information to aid gradient flow
     -  $v'' = v + v'$
 
 ---
