@@ -40,26 +40,12 @@ The **ECMWF**'s Integrated Forecasting System and its model **HRES** is the gold
 
 ---
 layout: default
-transition: fade-out
----
-
-# Machine Learning-Based Weather Prediction (MLWP)
-
-An alternative approach: **train forecast models directly on historical data**.
-
-- Learns from reanalysis archives like **ERA5** — global weather data from 1959 to present, at 0.25° resolution
-- Captures patterns not easily expressed in hand-crafted equations
-- Exploits modern **deep learning hardware** (GPUs/TPUs) instead of supercomputers
-- Dramatically better **speed-accuracy tradeoff**
-
----
-layout: default
 transition: slide-left
 ---
 
-# MLWP Architectures Approaching HRES
+# Machine Learning-Based Weather Prediction
 
-Several deep learning architectures have been applied to medium-range forecasting:
+An alternative approach: **train forecast models directly on historical data**.
 
 | Architecture | Example Model | Key Idea |
 |---|---|---|
@@ -69,6 +55,35 @@ Several deep learning architectures have been applied to medium-range forecastin
 | **Graph Neural Networks** | GraphCast | Message-passing on irregular meshes |
 
 These methods have been steadily closing the gap with HRES at **0.25°** resolution and lead times up to **7 days**.
+
+---
+layout: two-cols
+transition: slide-left
+---
+
+# GNN Key Terminology
+
+- **Nodes** — entities with feature vectors
+- **Edges** — connections, can carry features too
+- **Message passing** — gather → aggregate → update
+- **Pooling** — routing info between graph attributes
+- **Permutation invariance** — node order doesn't matter
+
+::right::
+
+<div class="ml-4 mt-16">
+
+### Encoder–Processor–Decoder
+
+A common GNN pipeline:
+
+1. **Encode** raw features into embeddings
+2. **Process** via repeated message passing
+3. **Decode** embeddings into predictions
+
+> This is exactly how GraphCast is structured.
+
+</div>
 
 ---
 layout: image-right
