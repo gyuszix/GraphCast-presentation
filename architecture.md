@@ -130,7 +130,7 @@ backgroundSize: 80%
 
 **Goal:** Prepare data into latent representations for the processor (run exclusively on the multi-mesh).
 
-- **Feature Embedding:** Embed features of grid nodes, mesh nodes, and edges into a fixed-size latent space using 5 MLPs
+- **Feature Embedding:** Embed features of grid nodes, mesh nodes, and edges into a fixed-size latent space using 5 MLPs (1 for each of grid node, mesh node, mesh edges, grid2mesh, mesh2grid)
 - **Latent Space:** 512 dimensions
 - **Grid2Mesh GNN:** Transfers atmospheric state information from grid nodes to mesh nodes via a single message-passing step
 
