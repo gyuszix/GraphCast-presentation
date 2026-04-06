@@ -23,7 +23,7 @@ The **ECMWF**'s Integrated Forecasting System and its model **HRES** is the gold
 
 - Solves governing equations of atmospheric dynamics on supercomputers
 - Global 10-day forecasts at **0.1° resolution**
-- Runs on **11,664+ cores**, ~6-8 hour per long range forecast (days)
+- Runs on **11,664+ cores**, ~6-8 hour per long range forecast (10 days)
 
 ::right::
 
