@@ -107,21 +107,3 @@ GNNs operate on **graph structures** — nodes connected by edges — and learn 
 
 
 > **Why not a regular grid?** Lat-lon grids bunch up at the poles. GNNs can operate on irregular meshes that distribute points evenly across the globe.
-
----
-layout: default
-transition: slide-left
----
-
-# GraphCast & What This Paper Represents
-
-- **Outperforms HRES on 90.3%** of 1,380 verification targets (variables × pressure levels × lead times)
-- Full **10-day global forecast in under 1 minute** on a single Cloud TPU v4
-- **0.25° resolution** (~28km) with **227 predicted variables**, only **36.7M parameters**
-- Strong on **severe events** — tropical cyclone tracking, atmospheric rivers, extreme temperatures — without specific training
-
-> HRES: 11,664-core supercomputer cluster, ~1 hour → GraphCast: 1 TPU, < 1 minute
-
-- First ML model to **decisively surpass** the best operational NWP system across a broad evaluation
-- Not a replacement — MLWP depends critically on NWP-generated reanalysis data like ERA5
-- A complement that can **improve and extend** current methods, opening doors to climate, ecology, energy, and agriculture
