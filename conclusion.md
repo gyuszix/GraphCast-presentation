@@ -105,19 +105,20 @@ layout: default
 transition: fade-out
 ---
 
-# Verification Methods: How Do We Know It's Good?
+# Verification: Fair Comparison With HRES
 
-GraphCast is evaluated against **HRES** across a massive verification space:
+Evaluated on **69 variable-level combinations** × **20 lead times** = **1,380 verification targets**, using two metrics:
 
-- **69 variable-level combinations** × **20 lead times** (12h to 10 days) = **1,380 verification targets**
 - **RMSE** — lower is better, area-weighted by grid cell size
-- **ACC** (Anomaly Correlation Coefficient) — measures whether the model predicted *deviations from normal climate*, not just the average. A model that always predicts climatology scores ACC = 0 despite decent RMSE. Higher is better (1.0 = perfect).
+- **ACC** (Anomaly Correlation Coefficient) — did you predict the *deviation from normal*, or just the climate average? A model that always predicts "typical weather for this date" scores ACC = 0. Higher is better (1.0 = perfect).
 
-### Fair Comparison Protocol
+### The ground truth problem
 
-- GraphCast evaluated against **ERA5** ground truth; HRES against **HRES-fc0** (its own initial conditions)
-- Only evaluated at initialization times where both systems have the **same ±3h observational lookahead**
-- Total precipitation excluded due to known biases in ERA5
+Each model needs to be measured against its own "correct answer." ERA5 and HRES use different data assimilation systems, so they disagree slightly on what the atmosphere looks like at any given moment. If you scored HRES against ERA5, it would start with nonzero error before it even begins forecasting — that's not fair.
+
+- **GraphCast** → measured against **ERA5** (what it was trained on)
+- **HRES** → measured against **HRES-fc0** (HRES's own snapshot of the atmosphere at forecast hour zero — its starting state before stepping forward)
+- Both evaluated only at times where they had the **same ±3h window of observations** as input
 
 ---
 layout: default
@@ -146,20 +147,21 @@ layout: default
 transition: fade-out
 ---
 
-# The Blurring Problem & Optimal Filtering
+# Does GraphCast Only Win Because It Blurs?
 
-A critical question: **Is GraphCast only winning because it blurs its forecasts?**
+MSE-trained models learn to **hedge**: if uncertain whether a storm will be 100km east or west, the MSE-optimal prediction is to smear the storm across both locations. This produces blurry but low-RMSE forecasts. HRES runs physics equations forward and produces sharp (but sometimes misplaced) predictions.
 
-MSE-trained models naturally learn to smooth predictions at longer lead times to minimize error under uncertainty. HRES, based on physical equations, does not blur.
+### The skeptic's argument
+GraphCast's RMSE advantage might just be a blurring trick — not better forecasting.
 
-### The Test
-- Applied **optimal linear isotropic filters** to both GraphCast and HRES forecasts
-- This gives HRES the same statistical blurring advantage
-- Result: optimally blurred GraphCast still beats optimally blurred HRES on **88.0%** of 1,380 targets
+### The test: let both models blur
+- Find the **best possible spatial blur** for each model's output (the amount that minimizes its RMSE)
+- Apply it — GraphCast's barely changes (it's already blurred), HRES gets a significant RMSE boost
+- Compare the blurred versions: GraphCast still wins on **88.0%** of 1,380 targets
 
-> GraphCast's advantage is real — not just a blurring artifact. Though down from 90.3% to 88.0%, the conclusion holds.
+> Down from 90.3% to 88.0% — so some advantage *was* from blurring, but most of it is real forecasting skill.
 
-This is a key limitation to acknowledge: GraphCast produces **deterministic forecasts** and expresses uncertainty through blurring rather than explicit probability distributions. Building ensemble/probabilistic MLWP systems is a crucial next step.
+This is a known limitation: GraphCast expresses uncertainty through blurring rather than explicit probabilities. Its successor **GenCast** addresses this by generating ensembles of sharp, diverse forecasts using diffusion models.
 
 ---
 layout: default
